@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { API } from 'aws-amplify';
+import { API } from 'aws-amplify/api';
 import { 
   Container, TextField, Button, Typography, Paper, 
   Grid, CircularProgress, Tabs, Tab, Box, Alert
