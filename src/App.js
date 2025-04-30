@@ -1,680 +1,256 @@
-/* App.js */
 import React, { useState } from 'react';
-import { Amplify } from 'aws-amplify';
-import { Auth } from '@aws-amplify/auth';
-import { withAuthenticator } from '@aws-amplify/ui-react';
-import '@aws-amplify/ui-react/styles.css';
-import './App.css';
+import { API } from 'aws-amplify';
+import { 
+  Container, TextField, Button, Typography, Paper, 
+  Grid, CircularProgress, Tabs, Tab, Box, Alert
+} from '@mui/material';
+import { saveAs } from 'file-saver';
 
-// AWS Amplify Configuration
-const amplifyConfig = {
-  Auth: {
-    region: 'us-east-1',
-    userPoolId: 'us-east-1_XXXXXXXXX', // Replace with your Cognito User Pool ID
-    userPoolWebClientId: 'XXXXXXXXXXXXXXXXXXXXXXXXXX', // Replace with your App Client ID
-    mandatorySignIn: true
-  },
-  API: {
-    endpoints: [
-      {
-        name: 'ArchitectureDocAPI',
-        endpoint: 'https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod', // Replace with your API Gateway URL
-        region: 'us-east-1'
-      }
-    ]
-  }
-};
-
-Amplify.configure(amplifyConfig);
-
-// Component for the header
-const Header = ({ user, onLogout }) => {
-  return (
-    <header className="app-header">
-      <div className="logo">
-        <h1>Architecture Document Generator</h1>
-      </div>
-      <div className="user-info">
-        <span>Welcome, {user.attributes.email}</span>
-        <button onClick={onLogout} className="logout-btn">Logout</button>
-      </div>
-    </header>
-  );
-};
-
-// Component for the document sections form
-const DocumentSectionsForm = ({ formData, setFormData, handleChange }) => {
-  return (
-    <div className="form-section">
-      <h2>Document Sections</h2>
-      <p className="section-hint">All sections will be included in the document. Focus on providing detailed information for each section.</p>
-
-      {/* Introduction */}
-      <div className="form-group">
-        <label htmlFor="introduction">1. Introduction</label>
-        <textarea
-          id="introduction"
-          name="introduction"
-          value={formData.introduction}
-          onChange={handleChange}
-          placeholder="Provide a brief introduction to the architecture project"
-          rows={3}
-        />
-      </div>
-
-      {/* Scope */}
-      <div className="form-group">
-        <label htmlFor="scope">2.i. Scope</label>
-        <textarea
-          id="scope"
-          name="scope"
-          value={formData.scope}
-          onChange={handleChange}
-          placeholder="Define what is in scope for this architecture"
-          rows={3}
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="outOfScope">2.ii. Out of Scope</label>
-        <textarea
-          id="outOfScope"
-          name="outOfScope"
-          value={formData.outOfScope}
-          onChange={handleChange}
-          placeholder="Define what is out of scope for this architecture"
-          rows={3}
-        />
-      </div>
-
-      {/* Requirements */}
-      <div className="form-group">
-        <label htmlFor="functionalRequirements">3.i. Functional Requirements</label>
-        <textarea
-          id="functionalRequirements"
-          name="functionalRequirements"
-          value={formData.functionalRequirements}
-          onChange={handleChange}
-          placeholder="List the functional requirements (one per line)"
-          rows={5}
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="nonFunctionalRequirements">3.ii. Non-Functional Requirements</label>
-        <textarea
-          id="nonFunctionalRequirements"
-          name="nonFunctionalRequirements"
-          value={formData.nonFunctionalRequirements}
-          onChange={handleChange}
-          placeholder="List the non-functional requirements (one per line)"
-          rows={5}
-        />
-      </div>
-
-      {/* System Context */}
-      <div className="form-group">
-        <label htmlFor="systemContextDescription">4. System Context</label>
-        <textarea
-          id="systemContextDescription"
-          name="systemContextDescription"
-          value={formData.systemContextDescription}
-          onChange={handleChange}
-          placeholder="Describe the system context including actors and external systems"
-          rows={5}
-        />
-      </div>
-
-      {/* Component Model */}
-      <div className="form-group">
-        <label htmlFor="componentModelDescription">5. Component Model</label>
-        <textarea
-          id="componentModelDescription"
-          name="componentModelDescription"
-          value={formData.componentModelDescription}
-          onChange={handleChange}
-          placeholder="Describe the main components of the system and their relationships"
-          rows={5}
-        />
-      </div>
-
-      {/* Physical Operational Model */}
-      <div className="form-group">
-        <label htmlFor="physicalModelDescription">6. Physical Operational Model</label>
-        <textarea
-          id="physicalModelDescription"
-          name="physicalModelDescription"
-          value={formData.physicalModelDescription}
-          onChange={handleChange}
-          placeholder="Describe the physical deployment and operational aspects"
-          rows={5}
-        />
-      </div>
-
-      {/* Architectural Decisions */}
-      <div className="form-group">
-        <label htmlFor="architecturalDecisions">7. Architectural Decisions</label>
-        <textarea
-          id="architecturalDecisions"
-          name="architecturalDecisions"
-          value={formData.architecturalDecisions}
-          onChange={handleChange}
-          placeholder="List key architectural decisions (Format: Decision | Options | Outcome | Justification)"
-          rows={8}
-        />
-      </div>
-
-      {/* Viability Assessment */}
-      <div className="form-group">
-        <label htmlFor="viabilityAssessment">8. Viability Assessment (RAID)</label>
-        <textarea
-          id="viabilityAssessment"
-          name="viabilityAssessment"
-          value={formData.viabilityAssessment}
-          onChange={handleChange}
-          placeholder="List risks, assumptions, issues, and dependencies"
-          rows={5}
-        />
-      </div>
-
-      {/* Appendix */}
-      <div className="form-group">
-        <label htmlFor="appendix">9. Appendix</label>
-        <textarea
-          id="appendix"
-          name="appendix"
-          value={formData.appendix}
-          onChange={handleChange}
-          placeholder="Additional information, references, etc."
-          rows={3}
-        />
-      </div>
-    </div>
-  );
-};
-
-// Component for project metadata form
-const ProjectMetadataForm = ({ formData, setFormData, handleChange }) => {
-  return (
-    <div className="form-section metadata-form">
-      <h2>Project Metadata</h2>
-      <p className="section-hint">This information will be used to customize the document and diagrams.</p>
-
-      <div className="form-row">
-        <div className="form-group">
-          <label htmlFor="projectName">Project Name</label>
-          <input
-            type="text"
-            id="projectName"
-            name="projectName"
-            value={formData.projectName}
-            onChange={handleChange}
-            placeholder="Project Name"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="projectId">Project ID</label>
-          <input
-            type="text"
-            id="projectId"
-            name="projectId"
-            value={formData.projectId}
-            onChange={handleChange}
-            placeholder="Project ID"
-          />
-        </div>
-      </div>
-
-      <div className="form-row">
-        <div className="form-group">
-          <label htmlFor="preparedBy">Prepared By</label>
-          <input
-            type="text"
-            id="preparedBy"
-            name="preparedBy"
-            value={formData.preparedBy}
-            onChange={handleChange}
-            placeholder="Your Name"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="preparedDate">Date</label>
-          <input
-            type="date"
-            id="preparedDate"
-            name="preparedDate"
-            value={formData.preparedDate}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
-
-      <div className="form-row">
-        <div className="form-group">
-          <label htmlFor="clientName">Client/Department</label>
-          <input
-            type="text"
-            id="clientName"
-            name="clientName"
-            value={formData.clientName}
-            onChange={handleChange}
-            placeholder="Client or Department Name"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="version">Version</label>
-          <input
-            type="text"
-            id="version"
-            name="version"
-            value={formData.version}
-            onChange={handleChange}
-            placeholder="1.0"
-          />
-        </div>
-      </div>
-
-      <div className="form-group cloud-platform-selector">
-        <label>Cloud Platform</label>
-        <div className="radio-group">
-          <label>
-            <input
-              type="radio"
-              name="cloudPlatform"
-              value="aws"
-              checked={formData.cloudPlatform === "aws"}
-              onChange={handleChange}
-            />
-            AWS
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="cloudPlatform"
-              value="azure"
-              checked={formData.cloudPlatform === "azure"}
-              onChange={handleChange}
-            />
-            Azure
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="cloudPlatform"
-              value="gcp"
-              checked={formData.cloudPlatform === "gcp"}
-              onChange={handleChange}
-            />
-            Google Cloud
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="cloudPlatform"
-              value="hybrid"
-              checked={formData.cloudPlatform === "hybrid"}
-              onChange={handleChange}
-            />
-            Hybrid/Multi-Cloud
-          </label>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Preview component
-const DocumentPreview = ({ documentData, isLoading }) => {
-  if (isLoading) {
-    return (
-      <div className="preview-loading">
-        <div className="loader"></div>
-        <p>Generating document preview...</p>
-        <p className="loading-detail">This may take up to a minute as we process your document.</p>
-      </div>
-    );
-  }
-
-  if (!documentData) return <div className="empty-preview">Document preview will appear here</div>;
-
-  return (
-    <div className="document-preview">
-      <div className="preview-header">
-        <h1>{documentData.projectName} - Architecture Document</h1>
-        <div className="preview-meta">
-          <p><strong>Prepared by:</strong> {documentData.preparedBy}</p>
-          <p><strong>Date:</strong> {documentData.preparedDate}</p>
-          <p><strong>Version:</strong> {documentData.version}</p>
-        </div>
-      </div>
-
-      <div className="preview-section">
-        <h2>1. Introduction</h2>
-        <div dangerouslySetInnerHTML={{ __html: documentData.introduction }} />
-      </div>
-
-      <div className="preview-section">
-        <h2>2. Scope</h2>
-        <h3>2.1. In Scope</h3>
-        <div dangerouslySetInnerHTML={{ __html: documentData.scope }} />
-        
-        <h3>2.2. Out of Scope</h3>
-        <div dangerouslySetInnerHTML={{ __html: documentData.outOfScope }} />
-      </div>
-
-      <div className="preview-section">
-        <h2>3. Requirements</h2>
-        <h3>3.1. Functional Requirements</h3>
-        <div dangerouslySetInnerHTML={{ __html: documentData.functionalRequirements }} />
-        
-        <h3>3.2. Non-Functional Requirements</h3>
-        <div dangerouslySetInnerHTML={{ __html: documentData.nonFunctionalRequirements }} />
-      </div>
-
-      <div className="preview-section">
-        <h2>4. System Context Diagram</h2>
-        {documentData.systemContextDiagram && (
-          <div className="diagram-container">
-            <img src={`data:image/svg+xml;base64,${btoa(documentData.systemContextDiagram)}`} alt="System Context Diagram" />
-          </div>
-        )}
-        <h3>4.1. System Context Description</h3>
-        <div dangerouslySetInnerHTML={{ __html: documentData.systemContextDescription }} />
-        
-        <h3>4.2. Actors and External Systems</h3>
-        <div dangerouslySetInnerHTML={{ __html: documentData.actorsTable }} />
-      </div>
-
-      <div className="preview-section">
-        <h2>5. Component Model</h2>
-        {documentData.componentModelDiagram && (
-          <div className="diagram-container">
-            <img src={`data:image/svg+xml;base64,${btoa(documentData.componentModelDiagram)}`} alt="Component Model Diagram" />
-          </div>
-        )}
-        <h3>5.1. Component Description</h3>
-        <div dangerouslySetInnerHTML={{ __html: documentData.componentModelDescription }} />
-      </div>
-
-      <div className="preview-section">
-        <h2>6. Physical Operational Model</h2>
-        {documentData.physicalModelDiagram && (
-          <div className="diagram-container">
-            <img src={`data:image/svg+xml;base64,${btoa(documentData.physicalModelDiagram)}`} alt="Physical Model Diagram" />
-          </div>
-        )}
-        <h3>6.1. Physical Model Description</h3>
-        <div dangerouslySetInnerHTML={{ __html: documentData.physicalModelDescription }} />
-      </div>
-
-      <div className="preview-section">
-        <h2>7. Architectural Decisions</h2>
-        <div dangerouslySetInnerHTML={{ __html: documentData.architecturalDecisionsTable }} />
-      </div>
-
-      <div className="preview-section">
-        <h2>8. Viability Assessment</h2>
-        <div dangerouslySetInnerHTML={{ __html: documentData.viabilityAssessmentTable }} />
-      </div>
-
-      <div className="preview-section">
-        <h2>9. Appendix</h2>
-        <div dangerouslySetInnerHTML={{ __html: documentData.appendix }} />
-      </div>
-    </div>
-  );
-};
-
-// Main app component
-function App({ signOut, user }) {
-  // Initialize form data
-  const initialFormData = {
+function App() {
+  const [projectDetails, setProjectDetails] = useState({
     projectName: '',
-    projectId: '',
-    preparedBy: '',
-    preparedDate: new Date().toISOString().split('T')[0],
-    clientName: '',
-    version: '1.0',
-    cloudPlatform: 'aws',
-    introduction: '',
-    scope: '',
-    outOfScope: '',
-    functionalRequirements: '',
-    nonFunctionalRequirements: '',
-    systemContextDescription: '',
-    componentModelDescription: '',
-    physicalModelDescription: '',
-    architecturalDecisions: '',
-    viabilityAssessment: '',
-    appendix: ''
-  };
+    projectDescription: '',
+    requirements: ''
+  });
+  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [documentPreview, setDocumentPreview] = useState(null);
+  const [currentTab, setCurrentTab] = useState(0);
+  const [activeSection, setActiveSection] = useState('introduction');
 
-  // State variables
-  const [formData, setFormData] = useState(initialFormData);
-  const [documentData, setDocumentData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [activeTab, setActiveTab] = useState('metadata'); // 'metadata', 'sections', 'preview'
-  const [downloadUrl, setDownloadUrl] = useState(null);
-
-  // Handle form field changes
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value
+    const { name, value } = e.target;
+    setProjectDetails({
+      ...projectDetails,
+      [name]: value
     });
   };
 
-  // Handle document generation
-  const handleGenerateDocument = async () => {
-    // Validate form
-    if (!formData.projectName) {
-      setError('Project Name is required');
+  const handleTabChange = (event, newValue) => {
+    setCurrentTab(newValue);
+  };
+
+  const handleSectionChange = (section) => {
+    setActiveSection(section);
+  };
+
+  const generatePreview = async () => {
+    if (!validateForm()) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await API.post('architectureDocApi', '/generate-document', {
+        body: {
+          projectDetails,
+          action: 'preview',
+          // You would provide these from configuration or environment
+          knowledgeBaseId: process.env.REACT_APP_KNOWLEDGE_BASE_ID,
+          modelId: process.env.REACT_APP_BEDROCK_MODEL_ID
+        }
+      });
+      
+      setDocumentPreview(response.content);
+      setCurrentTab(1); // Switch to preview tab
+    } catch (err) {
+      console.error('Error generating preview:', err);
+      setError('Failed to generate document preview. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateDocument = async () => {
+    if (!documentPreview) {
+      setError('Please generate a preview first');
       return;
     }
-
-    setIsLoading(true);
-    setError('');
-    setSuccessMessage('');
-    setDownloadUrl(null);
-
+    
+    setLoading(true);
+    setError(null);
+    
     try {
-      // Get AWS credentials
-      const credentials = await Auth.currentCredentials();
-      const token = (await Auth.currentSession()).getIdToken().getJwtToken();
-
-      // Call API Gateway
-      const response = await fetch('https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/generate-document', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token
-        },
-        body: JSON.stringify(formData)
+      const response = await API.post('architectureDocApi', '/generate-document', {
+        body: {
+          projectDetails,
+          action: 'generate',
+          // You would provide these from configuration or environment
+          knowledgeBaseId: process.env.REACT_APP_KNOWLEDGE_BASE_ID,
+          modelId: process.env.REACT_APP_BEDROCK_MODEL_ID
+        }
       });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      
+      // Convert base64 to blob and download
+      const byteCharacters = atob(response.document);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
-
-      const data = await response.json();
-      setDocumentData(data);
-      setSuccessMessage('Document generated successfully');
-      setActiveTab('preview');
-
-      // Store download URL if available
-      if (data.downloadUrl) {
-        setDownloadUrl(data.downloadUrl);
-      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      
+      saveAs(blob, response.filename);
     } catch (err) {
       console.error('Error generating document:', err);
-      setError(`Failed to generate document: ${err.message}`);
+      setError('Failed to generate document. Please try again.');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  // Handle document download
-  const handleDownloadDocument = async () => {
-    if (!documentData) {
-      setError('No document to download. Please generate the document first.');
-      return;
+  const validateForm = () => {
+    if (!projectDetails.projectName.trim()) {
+      setError('Project name is required');
+      return false;
     }
-
-    setIsLoading(true);
-    setError('');
-
-    try {
-      // Get AWS credentials
-      const token = (await Auth.currentSession()).getIdToken().getJwtToken();
-
-      // Request document download
-      const response = await fetch('https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/download-document', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token
-        },
-        body: JSON.stringify({
-          projectName: formData.projectName,
-          documentData: documentData
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-
-      // Handle document download
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${formData.projectName.replace(/\s+/g, '_')}_Architecture_Document.docx`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-
-      setSuccessMessage('Document downloaded successfully');
-    } catch (err) {
-      console.error('Error downloading document:', err);
-      setError(`Failed to download document: ${err.message}`);
-    } finally {
-      setIsLoading(false);
+    if (!projectDetails.projectDescription.trim()) {
+      setError('Project description is required');
+      return false;
     }
+    if (!projectDetails.requirements.trim()) {
+      setError('Requirements are required');
+      return false;
+    }
+    return true;
   };
 
-  // Reset form
-  const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset all form fields?')) {
-      setFormData(initialFormData);
-      setDocumentData(null);
-      setError('');
-      setSuccessMessage('');
-      setDownloadUrl(null);
-      setActiveTab('metadata');
-    }
-  };
+  // List of sections in the document
+  const documentSections = [
+    { id: 'introduction', title: 'Introduction' },
+    { id: 'scope', title: 'Scope' },
+    { id: 'requirements', title: 'Requirements' },
+    { id: 'system_context_diagram', title: 'System Context Diagram' },
+    { id: 'component_model', title: 'Component Model' },
+    { id: 'physical_operational_model', title: 'Physical Operational Model' },
+    { id: 'architectural_decisions', title: 'Architectural Decisions' },
+    { id: 'viability_assessment', title: 'Viability Assessment' },
+    { id: 'appendix', title: 'Appendix' }
+  ];
 
   return (
-    <div className="app-container">
-      <Header user={user} onLogout={signOut} />
-
-      <main className="main-content">
-        {error && <div className="error-message">{error}</div>}
-        {successMessage && <div className="success-message">{successMessage}</div>}
-
-        <div className="tab-navigation">
-          <button 
-            className={`tab-button ${activeTab === 'metadata' ? 'active' : ''}`}
-            onClick={() => setActiveTab('metadata')}
-          >
-            Project Metadata
-          </button>
-          <button 
-            className={`tab-button ${activeTab === 'sections' ? 'active' : ''}`}
-            onClick={() => setActiveTab('sections')}
-          >
-            Document Sections
-          </button>
-          <button 
-            className={`tab-button ${activeTab === 'preview' ? 'active' : ''}`}
-            onClick={() => setActiveTab('preview')}
-            disabled={!documentData && !isLoading}
-          >
-            Document Preview
-          </button>
-        </div>
-
-        <div className="tab-content">
-          {activeTab === 'metadata' && (
-            <ProjectMetadataForm 
-              formData={formData} 
-              setFormData={setFormData} 
-              handleChange={handleChange} 
-            />
-          )}
-
-          {activeTab === 'sections' && (
-            <DocumentSectionsForm 
-              formData={formData} 
-              setFormData={setFormData} 
-              handleChange={handleChange} 
-            />
-          )}
-
-          {activeTab === 'preview' && (
-            <DocumentPreview 
-              documentData={documentData} 
-              isLoading={isLoading} 
-            />
-          )}
-        </div>
-
-        <div className="action-buttons">
-          {activeTab !== 'preview' && (
-            <button 
-              className="generate-button"
-              onClick={handleGenerateDocument}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Generating...' : 'Generate Document'}
-            </button>
-          )}
-
-          {activeTab === 'previe
-w' && documentData && (
-            <button 
-              className="download-button"
-              onClick={handleDownloadDocument}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Downloading...' : 'Download Document (.docx)'}
-            </button>
-          )}
-
-          <button 
-            className="reset-button"
-            onClick={handleReset}
-            disabled={isLoading}
-          >
-            Reset Form
-          </button>
-        </div>
-      </main>
-
-      <footer className="app-footer">
-        <p>© {new Date().getFullYear()} Architecture Document Generator. All rights reserved.</p>
-      </footer>
-    </div>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Typography variant="h4" gutterBottom align="center">
+        AI-Assisted Architecture Document Generator
+      </Typography>
+      
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <Tabs value={currentTab} onChange={handleTabChange} sx={{ mb: 2 }}>
+          <Tab label="Project Details" />
+          <Tab label="Document Preview" disabled={!documentPreview} />
+        </Tabs>
+        
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        
+        {currentTab === 0 && (
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Project Name"
+                name="projectName"
+                value={projectDetails.projectName}
+                onChange={handleChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Project Description"
+                name="projectDescription"
+                value={projectDetails.projectDescription}
+                onChange={handleChange}
+                multiline
+                rows={4}
+                required
+                placeholder="Provide a detailed description of the project, including its purpose, goals, and context."
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Requirements"
+                name="requirements"
+                value={projectDetails.requirements}
+                onChange={handleChange}
+                multiline
+                rows={6}
+                required
+                placeholder="List both functional and non-functional requirements for the project."
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={generatePreview}
+                disabled={loading}
+                fullWidth
+              >
+                {loading ? <CircularProgress size={24} /> : 'Generate Document Preview'}
+              </Button>
+            </Grid>
+          </Grid>
+        )}
+        
+        {currentTab === 1 && documentPreview && (
+          <Box sx={{ display: 'flex' }}>
+            <Box sx={{ width: '25%', borderRight: '1px solid #e0e0e0', pr: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                Document Sections
+              </Typography>
+              {documentSections.map((section) => (
+                <Button
+                  key={section.id}
+                  fullWidth
+                  onClick={() => handleSectionChange(section.id)}
+                  sx={{
+                    justifyContent: 'flex-start',
+                    textTransform: 'none',
+                    backgroundColor: activeSection === section.id ? '#f0f7ff' : 'transparent',
+                    mb: 1
+                  }}
+                >
+                  {section.title}
+                </Button>
+              ))}
+              <Box sx={{ mt: 4 }}>
+                <Button 
+                  variant="contained" 
+                  color="success" 
+                  onClick={generateDocument}
+                  disabled={loading}
+                  fullWidth
+                >
+                  {loading ? <CircularProgress size={24} /> : 'Download as Word'}
+                </Button>
+              </Box>
+            </Box>
+            
+            <Box sx={{ width: '75%', p: 2 }}>
+              <Typography variant="h5" gutterBottom>
+                {documentPreview[activeSection]?.title || 'Section Not Available'}
+              </Typography>
+              
+              <Paper elevation={0} sx={{ p: 2, backgroundColor: '#fafafa' }}>
+                {documentPreview[activeSection]?.content ? (
+                  <Typography component="div" sx={{ whiteSpace: 'pre-wrap' }}>
+                    {documentPreview[activeSection].content}
+                  </Typography>
+                ) : (
+                  <Typography color="text.secondary">
+                    This section has no content.
+                  </Typography>
+                )}
+              </Paper>
+            </Box>
+          </Box>
+        )}
+      </Paper>
+    </Container>
   );
 }
 
-export default withAuthenticator(App);
+export default App;

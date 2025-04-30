@@ -1,443 +1,127 @@
-/* Global Styles */
-:root {
-  --primary-color: #2c6dd1;
-  --secondary-color: #3e4c59;
-  --accent-color: #0c8de4;
-  --light-bg: #f5f7fa;
-  --dark-bg: #1f2937;
-  --border-color: #d1d5db;
-  --success-color: #22c55e;
-  --error-color: #ef4444;
-  --text-dark: #1f2937;
-  --text-light: #6b7280;
-  --white: #ffffff;
-  --transition: all 0.3s ease;
-}
+/* app.css */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* Basic body styles for better appearance */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  line-height: 1.6;
-  font-size: 16px;
-  color: var(--text-dark);
-  background-color: var(--light-bg);
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f4f6f8; /* A common light background color */
 }
 
-.app-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
 }
 
-/* Header Styles */
-.app-header {
-  background-color: var(--dark-bg);
-  color: var(--white);
-  padding: 1.5rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+/* Equivalent for Container with maxWidth="lg" and sx={{ mt: 4, mb: 4 }} */
+/* Material UI's maxWidth="lg" sets a max-width, let's approximate */
+.AppContainer {
+    max-width: 1280px; /* Approximation of Material UI's lg breakpoint */
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 32px; /* Assuming MUI spacing unit 8px * 4 */
+    margin-bottom: 32px; /* Assuming MUI spacing unit 8px * 4 */
+    padding-left: 16px; /* Add some padding on smaller screens */
+    padding-right: 16px; /* Add some padding on smaller screens */
 }
 
-.logo h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
+/* Equivalent for Paper with sx={{ p: 2, mb: 2 }} */
+.AppPaper {
+    padding: 16px; /* Assuming MUI spacing unit 8px * 2 */
+    margin-bottom: 16px; /* Assuming MUI spacing unit 8px * 2 */
+    background-color: #fff;
+    box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12); /* Approximation of MUI paper shadow */
+    border-radius: 4px; /* Default MUI border radius */
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+/* Equivalent for Tabs with sx={{ mb: 2 }} */
+/* This targets the MUI Tabs component root if you were to apply a class */
+.MuiTabs-root {
+    margin-bottom: 16px; /* Assuming MUI spacing unit 8px * 2 */
 }
 
-.logout-btn {
-  background-color: transparent;
-  color: var(--white);
-  border: 1px solid var(--white);
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  transition: var(--transition);
+/* Equivalent for Alert with sx={{ mb: 2 }} */
+/* This targets the MUI Alert component root */
+.MuiAlert-root {
+     margin-bottom: 16px; /* Assuming MUI spacing unit 8px * 2 */
 }
 
-.logout-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+
+/* Equivalent for Box sx={{ display: 'flex' }} */
+.PreviewLayout {
+    display: flex;
+    /* Add responsiveness if needed, e.g., flex-direction: column on small screens */
 }
 
-/* Main Content */
-.main-content {
-  flex: 1;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
+/* Equivalent for Box sx={{ width: '25%', borderRight: '1px solid #e0e0e0', pr: 2 }} */
+.SectionList {
+    width: 25%;
+    border-right: 1px solid #e0e0e0;
+    padding-right: 16px; /* Assuming MUI spacing unit 8px * 2 */
+    box-sizing: border-box; /* Include padding in the element's total width and height */
+    /* Adjust for responsiveness, e.g., make it full width on small screens */
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
-/* Tab Navigation */
-.tab-navigation {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid var(--border-color);
+/* Equivalent for Section Button sx styles */
+.SectionList button {
+    width: 100%; /* fullWidth equivalent */
+    justify-content: flex-start;
+    text-transform: none;
+    margin-bottom: 8px; /* Assuming MUI spacing unit 8px * 1 */
+    padding: 8px 16px; /* Add some default button padding */
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 4px; /* Default MUI button border radius */
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; /* Add a transition */
 }
 
-.tab-button {
-  padding: 1rem 1.5rem;
-  background-color: transparent;
-  border: none;
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-light);
-  cursor: pointer;
-  transition: var(--transition);
-  position: relative;
+.SectionList button:hover {
+    background-color: rgba(0, 0, 0, 0.04); /* Hover effect */
 }
 
-.tab-button:after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background-color: transparent;
-  transition: var(--transition);
+.SectionList button.active { /* Equivalent for backgroundColor: '#f0f7ff' */
+    background-color: #f0f7ff;
 }
 
-.tab-button.active {
-  color: var(--primary-color);
+/* Equivalent for Box sx={{ mt: 4 }} around Download button */
+.DownloadButtonBox {
+    margin-top: 32px; /* Assuming MUI spacing unit 8px * 4 */
 }
 
-.tab-button.active:after {
-  background-color: var(--primary-color);
+/* Equivalent for Box sx={{ width: '75%', p: 2 }} */
+.PreviewContent {
+    width: 75%;
+    padding: 16px; /* Assuming MUI spacing unit 8px * 2 */
+    box-sizing: border-box; /* Include padding in the element's total width and height */
+    /* Adjust for responsiveness, e.g., make it full width on small screens and add top margin */
 }
 
-.tab-button:hover {
-  color: var(--primary-color);
+/* Equivalent for inner Paper sx={{ p: 2, backgroundColor: '#fafafa' }} */
+.PreviewContent .ContentPaper {
+    padding: 16px; /* Assuming MUI spacing unit 8px * 2 */
+    background-color: #fafafa;
+    border-radius: 4px; /* Default MUI border radius */
 }
 
-.tab-button:disabled {
-  color: var(--text-light);
-  opacity: 0.5;
-  cursor: not-allowed;
+/* Equivalent for Typography sx={{ whiteSpace: 'pre-wrap' }} */
+.PreviewContent .ContentText {
+    white-space: pre-wrap;
 }
 
-/* Form Sections */
-.form-section {
-  background-color: var(--white);
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
 
-.metadata-form {
-  /* Inherits form-section styles; no additional styling needed unless specific customization required */
-}
+/* Add styles for Typography variants (h4, h6, h5) - MUI provides these defaults */
+/* If you weren't using MUI Typography, you'd define these: */
+/*
+.MuiTypography-h4 { font-size: 2.125rem; ... }
+.MuiTypography-h6 { font-size: 1.25rem; ... }
+.MuiTypography-h5 { font-size: 1.5rem; ... }
+*/
 
-.form-section h2 {
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  color: var(--secondary-color);
-  font-weight: 600;
-}
-
-.section-hint {
-  color: var(--text-light);
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-row {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.form-row .form-group {
-  flex: 1;
-  margin-bottom: 0;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--secondary-color);
-}
-
-input[type="text"],
-input[type="date"],
-textarea,
-select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 1rem;
-  font-family: inherit;
-  transition: var(--transition);
-}
-
-input[type="text"]:focus,
-input[type="date"]:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(44, 109, 209, 0.1);
-}
-
-textarea {
-  resize: vertical;
-}
-
-/* Radio Group */
-.radio-group {
-  display: flex;
-  gap: 1.5rem;
-  margin-top: 0.5rem;
-}
-
-.radio-group label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  margin-bottom: 0;
-}
-
-.radio-group input[type="radio"] {
-  margin-right: 0.5rem;
-}
-
-/* Action Buttons */
-.action-buttons {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.generate-button,
-.download-button {
-  padding: 0.75rem 1.5rem;
-  background-color: var(--primary-color);
-  color: var(--white);
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.generate-button:hover,
-.download-button:hover {
-  background-color: #1e5bb0;
-}
-
-.download-button {
-  background-color: var(--accent-color);
-}
-
-.download-button:hover {
-  background-color: #0b7bc9;
-}
-
-.reset-button {
-  padding: 0.75rem 1.5rem;
-  background-color: transparent;
-  color: var(--secondary-color);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.reset-button:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Messages */
-.error-message,
-.success-message {
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-}
-
-.error-message {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: var(--error-color);
-  border-left: 4px solid var(--error-color);
-}
-
-.success-message {
-  background-color: rgba(34, 197, 94, 0.1);
-  color: var(--success-color);
-  border-left: 4px solid var(--success-color);
-}
-
-/* Document Preview */
-.document-preview {
-  background-color: var(--white);
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.preview-header {
-  margin-bottom: 2rem;
-}
-
-.preview-header h1 {
-  font-size: 2rem;
-  color: var(--secondary-color);
-  margin-bottom: 1rem;
-}
-
-.preview-meta {
-  color: var(--text-light);
-  font-size: 0.95rem;
-}
-
-.preview-meta p {
-  margin: 0.25rem 0;
-}
-
-.preview-section {
-  margin-bottom: 2rem;
-}
-
-.preview-section h2 {
-  font-size: 1.5rem;
-  color: var(--secondary-color);
-  margin-bottom: 1rem;
-}
-
-.preview-section h3 {
-  font-size: 1.25rem;
-  color: var(--secondary-color);
-  margin: 1rem 0 0.5rem;
-}
-
-.diagram-container {
-  margin: 1rem 0;
-  text-align: center;
-}
-
-.diagram-container img {
-  max-width: 100%;
-  height: auto;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-}
-
-/* Loading and Empty States */
-.preview-loading {
-  text-align: center;
-  padding: 2rem;
-  color: var(--text-light);
-}
-
-.loader {
-  border: 4px solid var(--light-bg);
-  border-top: 4px solid var(--primary-color);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-detail {
-  font-size: 0.9rem;
-  color: var(--text-light);
-}
-
-.empty-preview {
-  text-align: center;
-  padding: 2rem;
-  color: var(--text-light);
-  font-size: 1rem;
-}
-
-/* Footer */
-.app-footer {
-  background-color: var(--dark-bg);
-  color: var(--white);
-  text-align: center;
-  padding: 1rem;
-  font-size: 0.9rem;
-}
-
-.app-footer p {
-  margin: 0;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .main-content {
-    padding: 1rem;
-  }
-
-  .form-row {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .tab-navigation {
-    flex-wrap: wrap;
-  }
-
-  .tab-button {
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  .action-buttons {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .generate-button,
-  .download-button,
-  .reset-button {
-    width: 100%;
-    text-align: center;
-  }
-
-  .app-header {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-
-  .user-info {
-    justify-content: center;
-  }
-}
+/* Add basic styles for TextField, Button, CircularProgress if not using MUI */
+/* But since you are using MUI components, their default styles will apply */
