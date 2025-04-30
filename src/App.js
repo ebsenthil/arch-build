@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Amplify, Auth } from 'aws-amplify';
+/* App.js */
+import React, { useState } from 'react';
+import { Amplify } from 'aws-amplify';
+import { Auth } from '@aws-amplify/auth';
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import './App.css';
@@ -647,7 +649,8 @@ function App({ signOut, user }) {
             </button>
           )}
 
-          {activeTab === 'preview' && documentData && (
+          {activeTab === 'previe
+w' && documentData && (
             <button 
               className="download-button"
               onClick={handleDownloadDocument}
@@ -668,7 +671,7 @@ function App({ signOut, user }) {
       </main>
 
       <footer className="app-footer">
-        <p>&copy; {new Date().getFullYear()} Architecture Document Generator. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Architecture Document Generator. All rights reserved.</p>
       </footer>
     </div>
   );
